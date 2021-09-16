@@ -1,13 +1,13 @@
 ﻿#include <stdio.h>
 struct State
 {
-	int monkey; /*-1:Monkey at A;0: Monkey at B;1:Monkey at C;*/
-	int box; /*-1:box at A;0:box at B;1:box at C;*/
+	int monkey; /*-1:Monkey at A; 0: Monkey at B; 1:Monkey at C;*/
+	int box; /*-1:box at A ;0:box at B;	1:box at C;*/
 	int banana; /*Banana at B,Banana=0*/
-	int monbox; /*-1: monkey on the box;1: monkey  the box;*/
+	int monbox; /*-1: monkey not on the box;	1: monkey on the box;*/
 };
 struct State States[150];
-char* routesave[150];
+const char* routesave[150];
 /*function monkeygoto,it makes the monkey goto the other place*/
 void monkeygoto(int b, int i)
 {
@@ -99,177 +99,67 @@ void showSolution(int i)
 	}
 	printf("\n");
 }
-/*perform next step*/
-void nextStep(int i)
+
+void nextStep(int i) 
 {
 	int c;
-	int j;
 	if (i >= 150)
 	{
 		printf("%s  \n", "steplength reached 150,have problem ");
 		return;
 	}
-	for (c = 0; c < i; c++) /*if the current state is same to previous,retrospect*/
+		for (c = 0; c < i; c++) /*if the current state is same to previous,retrospect*/
 	{
-		if (States[c].monkey == States[i].monkey && States[c].box == States[i].box && States[c].banana == States[i].banana && States[c].monbox == States[i].monbox)
+		if (States[c].monkey == States[i].monkey && States[c].box == States[i].box && States[c].banana ==
+			States[i].banana && States[c].monbox == States[i].monbox)
 		{
 			return;
 		}
 	}
-	if (States[i].monbox == 1 && States[i].monkey == 0 && States[i].banana == 0 && States[i].box == 0)
+	if (States[i].box == States[i].banana)		//若箱子在香蕉下
 	{
-		showSolution(i);
-		printf("Press any key to continue \n");
-		getchar();/*to save screen for user,press any key to continue*/
-		return;
-	}
-	j = i + 1;
-	if (States[i].monkey == 0)
-	{
-		if (States[i].box == 0)
+		if (States[i].monkey == States[i].banana)	//若箱子在香蕉下，且猴子也在香蕉下
 		{
-			if (States[i].monbox == -1)
+			if (States[i].monbox == 1)	
+				//若箱子在香蕉下，且猴子也在香蕉下，且猴子已经爬上香蕉，则猴子摘到香蕉
 			{
+				showSolution(i);
+				printf("Press any key to continue \n");
+				getchar();
+				return;
+			}
+			else {
 				climbonto(i);
-				reach(i + 1);
-				nextStep(j);
-				/*monkeygoto(-1,i);
-				nextStep(j);
-				monkeygoto(0,i);
-				nextStep(j);
-				movebox(-1,i);
-				nextStep(j);
-				movebox(0,i);
-				nextStep(j);*/
-			}
-			else
-			{
-				reach(i + 1);
-				nextStep(j);
-				/*climbdown(i);
-				nextStep(j);*/
+				reach(++i);
+				nextStep(i);
 			}
 		}
-		else if (States[i].box == 1)
-		{
-			/*monkeygoto(-1,i);
-			nextStep(j);*/
-			monkeygoto(1, i);
-			nextStep(j);
-			movebox(0, i);
-			nextStep(j);
-			climbonto(i);
-			reach(i + 1);
-			nextStep(j);
-		}
-		else /*box==-1*/
-		{
-			monkeygoto(-1, i);
-			nextStep(j);
-			movebox(0, i);
-			nextStep(j);
-			climbonto(i);
-			reach(i + 1);
-			nextStep(j);
+		else {		//若箱子在香蕉下，但猴子不在香蕉下
+			monkeygoto(States[i].box, i);	//猴子移动到箱子处
+			nextStep(++i);
 		}
 	}
-	/*end if*/
-	if (States[i].monkey == -1)
-	{
-		if (States[i].box == -1)
+	else if(States[i].monkey==States[i].box){		//箱子不在香蕉下,且猴子和箱子在一起
+		if (States[i].monbox == 1)			//箱子不在香蕉下,且猴子在箱子上
 		{
-			if (States[i].monbox == -1)
-			{
-				movebox(0, i);
-				nextStep(j);
-				climbonto(i);
-				reach(i + 1);
-				nextStep(j);
-			}
-			else
-			{
-				climbdown(i);
-				nextStep(j);
-				movebox(0, i);
-				nextStep(j);
-				climbonto(i);
-				reach(i + 1);
-				nextStep(j);
-			}
+			climbdown(i);		//猴子爬下箱子
+			nextStep(++i);
 		}
-		else if (States[i].box == 0)
-		{
-			monkeygoto(0, i);
-			nextStep(j);
-			climbonto(i);
-			reach(i + 1);
-			nextStep(j);
-		}
-		else
-		{
-			monkeygoto(1, i);
-			nextStep(j);
-			movebox(0, i);
-			nextStep(j);
-			climbonto(i);
-			reach(i + 1);
-			nextStep(j);
+		else{		//箱子不在香蕉下,且猴子和箱子在一起,但猴子没爬上箱子
+			movebox(States[i].banana, i);	//猴子把箱子搬到香蕉下
+			nextStep(++i);
 		}
 	}
-	/*end if*/
-	if (States[i].monkey == 1)
-	{
-		if (States[i].box == 1)
-		{
-			if (States[i].monbox == -1)
-			{
-				movebox(0, i);
-				nextStep(j);
-				climbonto(i);
-				reach(i + 1);
-				nextStep(j);
-			}
-			else
-			{
-				climbdown(i);
-				nextStep(j);
-				movebox(0, i);
-				nextStep(j);
-				climbonto(i);
-				reach(i + 1);
-				nextStep(j);
-			}
-		}
-		else if (States[i].box == -1)
-		{
-			monkeygoto(-1, i);
-			nextStep(j);
-			movebox(0, i);
-			nextStep(j);
-			movebox(0, i);
-			nextStep(j);
-			climbonto(i);
-			reach(i + 1);
-			nextStep(j);
-		}
-		else
-		{
-			monkeygoto(0, i);
-			nextStep(j);
-			movebox(0, i);
-			nextStep(j);
-			climbonto(i);
-			reach(i + 1);
-			nextStep(j);
-		}
+	else{		//箱子不在香蕉下,且猴子和箱子也不在一起
+		monkeygoto(States[i].box, i);	//猴子走到箱子处
+		nextStep(++i);
 	}
-	/*end if*/
-}/*end nextStep*/
+}
 int main()
 {
-	States[0].monkey = -1;
-	States[0].box = 1;
-	States[0].banana = 0;
-	States[0].monbox = -1;
+	States[0].monkey = 0;	//-1：猴子初始在A处
+	States[0].box = -1;		//1：箱子初始在C处
+	States[0].banana = 1;	//0：香蕉初始在B处
+	States[0].monbox = -10;	//-1：猴子初始不在箱子上
 	nextStep(0);
 }
