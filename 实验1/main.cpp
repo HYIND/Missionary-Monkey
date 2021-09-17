@@ -11,8 +11,7 @@ const char* routesave[150];
 /*function monkeygoto,it makes the monkey goto the other place*/
 void monkeygoto(int b, int i)
 {
-	int a;
-	a = b;
+	int a = b;
 	if (a == -1)
 	{
 		routesave[i] = "Monkey go to A";
@@ -40,8 +39,7 @@ void monkeygoto(int b, int i)
 /*function movebox,the monkey move the box to the other place*/
 void movebox(int a, int i)
 {
-	int B;
-	B = a;
+	int B = a;
 	if (B == -1)
 	{
 		routesave[i] = "monkey move box to A";
@@ -123,6 +121,7 @@ void nextStep(int i)
 			if (States[i].monbox == 1)	
 				//若箱子在香蕉下，且猴子也在香蕉下，且猴子已经爬上香蕉，则猴子摘到香蕉
 			{
+				reach(i);
 				showSolution(i);
 				printf("Press any key to continue \n");
 				getchar();
@@ -130,8 +129,7 @@ void nextStep(int i)
 			}
 			else {
 				climbonto(i);
-				reach(++i);
-				nextStep(i);
+				nextStep(++i);
 			}
 		}
 		else {		//若箱子在香蕉下，但猴子不在香蕉下
@@ -157,9 +155,9 @@ void nextStep(int i)
 }
 int main()
 {
-	States[0].monkey = 0;	//-1：猴子初始在A处
-	States[0].box = -1;		//1：箱子初始在C处
-	States[0].banana = 1;	//0：香蕉初始在B处
-	States[0].monbox = -10;	//-1：猴子初始不在箱子上
+	States[0].monkey = -1;	//-1：猴子初始在A处
+	States[0].box = 1;		//1：箱子初始在C处
+	States[0].banana = 0;	//0：香蕉初始在B处
+	States[0].monbox = -1;	//-1：猴子初始不在箱子上
 	nextStep(0);
 }
