@@ -138,9 +138,9 @@ void nextstep()
 
 void main()
 {
-	cout << "请输入传教士数量（即野人数量）";
+	cout << "请输入传教士数量（即野人数量）：";
 	cin >> n;
-	cout << "请输入小船承载能力";
+	cout << "请输入小船承载能力：";
 	cin >> boatload;
 	states[0].leftmen = n;
 	states[0].leftsavages = n;
